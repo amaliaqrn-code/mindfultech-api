@@ -63,6 +63,41 @@ class AuthController extends Controller
         ]);
     }
 
+    public function updateProfile(Request $request)
+{
+    // 1. Ambil data user yang sedang login via token Sanctum
+    $user = $request->user();
+
+    // 2. Validasi input dari Flutter
+    $request->validate([
+        'name' => 'sometimes|string|max:255',
+        'username' => 'sometimes|nullable|string|unique:users,username,' . $user->id,
+        'gender' => 'sometimes|nullable|string',
+        'phone' => 'sometimes|nullable|string|max:15',
+        // Jika upload gambar, aktifkan baris di bawah ini:
+        // 'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+
+    // 3. Tampung data yang akan diupdate
+    $data = $request->only(['name', 'username', 'gender', 'phone']);
+
+    // 4. Logika opsional jika Flutter mengirimkan file foto profil
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $path = $file->store('profile_images', 'public');
+        $data['image_path'] = $path;
+    }
+
+    // 5. Update data ke database
+    $user->update($data);
+
+    // 6. Kembalikan respons sukses ke Flutter
+    return response()->json([
+        'message' => 'Profil berhasil diperbarui',
+        'user' => $user
+    ], 200);
+}
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

@@ -17,12 +17,27 @@ class CategorySeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'name' => 'Kerja',
+                'name' => 'Pekerjaan',
+                'created_at' => now()
+            ],
+            [
+                'user_id' => 1,
+                'name' => 'Kesehatan',
                 'created_at' => now()
             ],
             [
                 'user_id' => 1,
                 'name' => 'Pribadi',
+                'created_at' => now()
+            ],
+            [
+                'user_id' => 1,
+                'name' => 'Rumah',
+                'created_at' => now()
+            ],
+            [
+                'user_id' => 1,
+                'name' => 'Lainnya',
                 'created_at' => now()
             ]
         ]);

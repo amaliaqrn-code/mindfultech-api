@@ -11,22 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. MEMBUAT TABEL USERS (Cukup SATU blok bersih ini saja)
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('username')->unique()->nullable(); // 🟢 Tambahan untuk @username
+            $table->string('gender')->nullable();            // 🟢 Tambahan untuk Female/Male
+            $table->string('phone')->nullable();             // 🟢 Tambahan untuk nomor HP
+            $table->string('image_path')->nullable();        // 🟢 Tambahan untuk simpan foto profil
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // 2. MEMBUAT TABEL PASSWORD RESET TOKENS (Diperlukan oleh Laravel)
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // 3. MEMBUAT TABEL SESSIONS
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

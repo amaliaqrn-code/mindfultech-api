@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -22,6 +23,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'username', // 🟢 Izinkan mass assignment
+        'gender',   // 🟢 Izinkan mass assignment
+        'phone',    // 🟢 Izinkan mass assignment
+        'image_path',
     ];
 
     /**
@@ -45,6 +50,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // 🔴 Setiap kali ada User baru dibuat (Register)
+        static::created(function (User $user) {
+
+            // List 6 kategori default aplikasi kamu
+            $now = now();
+            $defaultCategories = [
+                ['user_id' => $user->id, 'name' => 'Belajar', 'created_at' => $now, 'updated_at' => $now],
+                ['user_id' => $user->id, 'name' => 'Pekerjaan', 'created_at' => $now, 'updated_at' => $now],
+                ['user_id' => $user->id, 'name' => 'Kesehatan', 'created_at' => $now, 'updated_at' => $now],
+                ['user_id' => $user->id, 'name' => 'Pribadi', 'created_at' => $now, 'updated_at' => $now],
+                ['user_id' => $user->id, 'name' => 'Rumah', 'created_at' => $now, 'updated_at' => $now],
+                ['user_id' => $user->id, 'name' => 'Lainnya', 'created_at' => $now, 'updated_at' => $now],
+            ];
+
+            DB::table('categories')->insert($defaultCategories);
+        });
     }
 
     public function tasks() {

@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+
+    protected $fillable = [
+            'user_id',
+            'category_id', // 👈 TINGGAL TAMBAHKAN INI YANG BIKIN ERROR TADI!
+            'title',
+            'description',
+            'difficulty',
+            'deadline',
+            'is_completed',
+        ];
     public function user() {
         return $this->belongsTo(User::class);
     }
