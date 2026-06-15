@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('focus_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('task_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('task_id')->nullable()->constrained()->cascadeOnDelete();
 
             $table->integer('duration');
             $table->integer('break_duration')->default(5);
 
             $table->enum('status', ['ongoing', 'finished', 'interrupted']);
+            $table->string('emotion')->nullable();
 
             $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();

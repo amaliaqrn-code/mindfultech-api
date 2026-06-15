@@ -11,11 +11,11 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Hanya CategorySeeder sebagai referensi default
+        // Streak, JourneyProgress, Categories dibuat otomatis via User::booted()
+        // Tidak ada data dummy user/task/focus session
         $this->call([
-            UserSeeder::class,
             CategorySeeder::class,
-            TaskSeeder::class
         ]);
-
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -35,33 +36,37 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
-    {
-        // Validasi
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
 
-        // Cek user
-        $user = \App\Models\User::where('email', $request->email)->first();
+public function login(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        // Kalau tidak ada / password salah
-        if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Email atau password salah'
-            ], 401);
-        }
-
-        // Generate token baru
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+    if ($validator->fails()) {
         return response()->json([
-            'message' => 'Login berhasil',
-            'user' => $user,
-            'token' => $token
-        ]);
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Email atau password salah'
+        ], 401);
+    }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login berhasil',
+        'user' => $user,
+        'token' => $token
+    ]);
+}
 
     public function updateProfile(Request $request)
 {
